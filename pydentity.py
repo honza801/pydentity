@@ -28,6 +28,7 @@ CONF = {
     # Clear text that explain to user the password requirements
     "PASSWORD_PATTERN_HELP" : "Lower case, numeric and upper case or special char. At least 8 char",
     "ROUTE_PREFIX": "",
+    "ASK_OLD_PASSWORD": False,
 }
 
 def get_route(path):
@@ -54,7 +55,7 @@ def user(username):
     with htpasswd.Basic(CONF["PWD_FILE"], mode="md5") as userdb:
         new_user = username not in userdb
         admin, admin_error_message = check_user_is_admin(request.environ.get('REMOTE_USER'))
-        ask_old_password = True
+        ask_old_password = CONF['ASK_OLD_PASSWORD']
         if admin and request.environ.get('REMOTE_USER') != username:
             ask_old_password = False
         if CONF["REQUIRE_REMOTE_USER"]:
