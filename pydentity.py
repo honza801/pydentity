@@ -32,7 +32,12 @@ CONF = {
     "DAV_PATH": "/var/www/dav",
     "DAV_CREATE_HOME": True,
     "ASK_OLD_PASSWORD": False,
+    "USE_DATABASE": True,
+    "DATABASE_FILE": os.path.dirname(__file__) + '/pydentity.db',
 }
+
+if CONF['USE_DATABASE']:
+    import database
 
 def get_route(path):
     return CONF['ROUTE_PREFIX']+path
@@ -87,9 +92,11 @@ def user(username):
                 userdb.add(username, request.form["new_password"])
                 if CONF['DAV_CREATE_HOME']: 
                     os.mkdir("%s/%s" % (CONF['DAV_PATH'], username))
+                update_last_log(username)
                 message = "User created"
             else:
                 userdb.change_password(username, request.form["new_password"])
+                update_last_log(username)
                 message = "Password changed"
             if request.args.get("return_to"):
                 return redirect(request.args.get("return_to"))
@@ -156,6 +163,12 @@ def check_password(encrypted_passwd, clear_passwd, mode="md5"):
     new_encrypted_passwd = subprocess.check_output(["openssl", "passwd", "-apr1", "-salt", salt, clear_passwd]).decode('utf-8')
     return encrypted_passwd == new_encrypted_passwd
 
+def update_last_log(username):
+    if not CONF['USE_DATABASE']:
+        return True
+    db = database.Database(CONF)
+    db.update_password_last_change(username)
+    db.close()
 
 if __name__ == "__main__":
     app.debug = True
