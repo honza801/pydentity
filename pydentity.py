@@ -27,10 +27,13 @@ CONF = {
     "PASSWORD_PATTERN": "(?=.*\d)(?=.*[a-z])(?=.*[A-Z\!\@\#\$\%\^\&\*\-\.\,]).{8,}",
     # Clear text that explain to user the password requirements
     "PASSWORD_PATTERN_HELP" : "Lower case, numeric and upper case or special char. At least 8 char",
+    "ROUTE_PREFIX": "",
 }
 
+def get_route(path):
+    return CONF['ROUTE_PREFIX']+path
 
-@app.route("/")
+@app.route(get_route("/"))
 def home():
     if request.environ.get('REMOTE_USER'):
         url = url_for("user", username=request.environ.get('REMOTE_USER'))
@@ -40,13 +43,13 @@ def home():
         url = url_for("list_users")
     return redirect(url)
 
-@app.route("/list_users")
+@app.route(get_route("/list_users"))
 def list_users():
     with htpasswd.Basic(CONF["PWD_FILE"], mode="md5") as userdb:
         return render_template("list.html", users=userdb.users)
 
 
-@app.route("/user/<username>", methods=["POST", "GET"])
+@app.route(get_route("/user/<username>"), methods=["POST", "GET"])
 def user(username):
     with htpasswd.Basic(CONF["PWD_FILE"], mode="md5") as userdb:
         new_user = username not in userdb
@@ -88,7 +91,7 @@ def user(username):
                 return render_template("message.html", message=message, success=True)
 
 
-@app.route("/user_groups/<username>", methods=["POST", "GET"])
+@app.route(get_route("/user_groups/<username>"), methods=["POST", "GET"])
 def user_groups(username):
 
     admin, message = check_user_is_admin(request.environ.get('REMOTE_USER'))
