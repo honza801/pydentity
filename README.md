@@ -84,3 +84,8 @@ Here's the parameters you may want to tune:
     GROUP_FILE: Full path the group file to manage. Default to <pydentity dir>/htgroup
     ADMIN_GROUP: Name of the admin group. Default to "admin". User need to belong to this group to be able to change other user password or create new users. REQUIRE_REMOTE_USER parameter is required
     REQUIRE_REMOTE_USER: Whether to require http basic auth upstream (for example with apache). Default to True. If False, everyone is able to change anyone password if the correct previous one is provided.
+    ROUTE_PREFIX: Adds prefix to path. Can be used to change location of application.
+    DAV_PATH: Webdav root directory.
+    DAV_CREATE_HOME: Creates home directory in DAV_PATH for <new_user> if True.
+    ASK_OLD_PASSWORD: Determines if application asks for old password.
+
