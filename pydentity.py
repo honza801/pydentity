@@ -67,7 +67,7 @@ def user(username):
             if request.environ.get('REMOTE_USER') != username or new_user:
                 # User trying to change someone else password
 
-                if not admin:
+                if not admin and not check_user_can_set_password(request, username):
                     # User is not admin or admin group does exist. Ciao
                     return render_template("message.html", message=admin_error_message)
 
@@ -144,6 +144,10 @@ def check_user_is_admin(user):
         # Everything is fine
         return (True, "")
 
+def check_user_can_set_password(request, username):
+    if request.environ.get('REMOTE_USER') == username:
+        return (True, "")
+    return (False, "User cannot change password")
 
 def check_password(encrypted_passwd, clear_passwd, mode="md5"):
     """check that password is correct against its hash
