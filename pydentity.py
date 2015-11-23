@@ -29,7 +29,7 @@ CONF = {
     # Clear text that explain to user the password requirements
     "PASSWORD_PATTERN_HELP" : "Lower case, numeric and upper case or special char. At least 8 char",
     "ROUTE_PREFIX": "",
-    "DAV_PATH": "/var/www/dav",
+    "DAV_PATHS": [ "/var/www/dav", "/var/www/dav.encfs" ],
     "DAV_CREATE_HOME": True,
     "ASK_OLD_PASSWORD": False,
     "USE_DATABASE": True,
@@ -91,7 +91,8 @@ def user(username):
             if new_user:
                 userdb.add(username, request.form["new_password"])
                 if CONF['DAV_CREATE_HOME']: 
-                    os.mkdir("%s/%s" % (CONF['DAV_PATH'], username))
+                    for dav_path in CONF['DAV_PATHS']:
+                        os.mkdir("%s/%s" % (dav_path, username))
                 update_last_log(username)
                 message = "User created"
             else:
