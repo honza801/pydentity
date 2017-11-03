@@ -89,10 +89,14 @@ def user(username):
                 return render_template("message.html", message="new password does not match requirements (%s" % CONF["PASSWORD_PATTERN_HELP"])
             # Ok, ready to change password or create user
             if new_user:
-                userdb.add(username, request.form["new_password"])
                 if CONF['DAV_CREATE_HOME']: 
-                    for dav_path in CONF['DAV_PATHS']:
-                        os.mkdir("%s/%s" % (dav_path, username))
+                    user_homes = ["%s/%s" % (dav_path, username) for dav_path in CONF['DAV_PATHS']]
+                    for user_home in user_homes:
+                        if os.path.exists(user_home):
+                            return render_template("message.html", message="Users home probably exists, please contact helpdesk@civ.zcu.cz.", success=False)
+                    for user_home in user_homes:
+                        os.mkdir(user_home)
+                userdb.add(username, request.form["new_password"])
                 update_last_log(username)
                 message = "User created"
             else:
