@@ -39,11 +39,20 @@ CONF = {
 if CONF['USE_DATABASE']:
     import database
 
+def check_file(file):
+    if not os.path.exists(file):
+        open(file, 'a').close()
+
+def check_auth_files():
+    check_file(CONF['PWD_FILE'])
+    check_file(CONF['GROUP_FILE'])
+
 def get_route(path):
     return CONF['ROUTE_PREFIX']+path
 
 @app.route(get_route("/"))
 def home():
+    check_auth_files()
     if request.environ.get('REMOTE_USER'):
         url = url_for("user", username=request.environ.get('REMOTE_USER'))
         if "return_to" in request.args:
@@ -60,6 +69,7 @@ def list_users():
 
 @app.route(get_route("/user/<username>"), methods=["POST", "GET"])
 def user(username):
+    check_auth_files()
     with htpasswd.Basic(CONF["PWD_FILE"], mode="md5") as userdb:
         new_user = username not in userdb
         admin, admin_error_message = check_user_is_admin(request.environ.get('REMOTE_USER'))
