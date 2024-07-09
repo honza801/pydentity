@@ -5,7 +5,8 @@ sys.path.insert(0, dirname(__file__))
 
 #activate_this = join(dirname(__file__), "venv", "bin", "activate_this.py")
 #execfile(activate_this, dict(__file__=activate_this))
+sys.path.insert(0, join(dirname(__file__), "lib/python3.11/site-packages"))
 
-print sys.path
+print(sys.path)
 from pydentity import app as application
 application.debug=True
