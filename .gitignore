@@ -4,3 +4,6 @@ htgroup
 venv
 *.pyc
 *.db
+bin/
+lib/
+pyvenv.cfg
