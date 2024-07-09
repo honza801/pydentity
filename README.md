@@ -52,7 +52,11 @@ virtual environment to install python third party libs, but it's up to you ! the
 virtual env named "venv" at the root code level. If you don't use virtual env, comment this line, else, adapt it 
 to you virtual env location. Install python requirements with this simple line:
  
- pip install -r requirement
+```
+virtualenv .
+source bin/activate
+pip install -r requirement
+```
 
 Then setup your Webserver to target pydidentity.wsgi file. Here's a sample Apache + mod_wsgi configuration snippet
 you could put in a virtual env definition:
